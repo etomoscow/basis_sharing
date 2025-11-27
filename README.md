@@ -30,6 +30,30 @@ python test_adapter.py --cf tasks/configs/wikitext_ppl/llama/share2/share_llama_
 python test_throughput.py --cf tasks/configs/wikitext_ppl/llama/share2/share_llama_7b_20.yaml
 ~~~
 
+## LLaMA 3.1 Support
+We have added support for LLaMA 3.1 8B Instruct model.
+
+### Configurations
+New configuration files are available for 30%, 40%, and 50% compression ratios:
+- `tasks/configs/wikitext_ppl/llama/share2/share_llama3_1_8b_30.yaml`
+- `tasks/configs/wikitext_ppl/llama/share2/share_llama3_1_8b_40.yaml`
+- `tasks/configs/wikitext_ppl/llama/share2/share_llama3_1_8b_50.yaml`
+
+### Compression and Evaluation Pipeline
+Use `verify_eval.py` to run the full pipeline (Compress -> Evaluate -> Save Results):
+```bash
+python verify_eval.py
+```
+This script will:
+1. Check if compressed checkpoints exist (in `untrained_model/`).
+2. If not, compress the model using the specified configs.
+3. Evaluate the model on PPL (Wikitext) and zero-shot tasks (ARC, HellaSwag, PIQA, WinoGrande, OpenBookQA).
+4. Save detailed logs to `logs/`.
+
+### Interactive Evaluation
+For interactive evaluation and PPL testing on PTB, use the Jupyter notebook:
+- `eval_compressed_model.ipynb`
+
 ## Reference 
 
 @misc{{parametersharing2024,
