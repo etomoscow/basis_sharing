@@ -37,10 +37,18 @@ if __name__ == '__main__':
     config = ShareConfig(cmd_args)
     print(config.compression_ratio)
     if config.model_type == "llama2":
-        tokenizer = LlamaTokenizer.from_pretrained(config.model_name)
+        # Use AutoTokenizer for LLaMA 3.1, LlamaTokenizer for LLaMA 2
+        if "llama-3" in config.model_name.lower() or "llama3" in config.model_name.lower():
+            tokenizer = AutoTokenizer.from_pretrained(config.model_name)
+        else:
+            tokenizer = LlamaTokenizer.from_pretrained(config.model_name)
     else:
         tokenizer = AutoTokenizer.from_pretrained(config.model_name)
-    tokenizer.pad_token = "[PAD]"
+    
+    # Set padding token (use eos_token for LLaMA models as they don't have a dedicated pad token)
+    if tokenizer.pad_token is None:
+        tokenizer.pad_token = tokenizer.eos_token
+        tokenizer.pad_token_id = tokenizer.eos_token_id
     train_dataset, val_dataset, test_dataset, data_collator = prepare_data(config.dataset_name, tokenizer,
                                                                            config.context_length,
                                                                            config.dataset_cache_dir)

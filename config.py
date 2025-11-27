@@ -40,6 +40,8 @@ class ShareConfig:
         "jeffwan/llama-7b-hf": "llama2-7b",
         "jeffwan/llama-13b-hf": "llama2-13b",
         "jeffwan/llama-30b-hf": "llama2-30b",
+        "meta-llama/Meta-Llama-3.1-8B-Instruct": "llama3.1-8b",
+        "unsloth/Llama-3.1-8B-Instruct": "llama3.1-8b",
         'gpt2': "gpt2",
         'facebook/opt-6.7b': 'opt-6.7b',
         "mistralai/Mistral-7B-v0.1": "mistral-7b"
@@ -92,6 +94,16 @@ class ShareConfig:
             "fc2": (16384, 4096),
         },
         "mistral-7b": {
+            "self_attn.k_proj": (4096, 1024),
+            "self_attn.q_proj": (4096, 4096),
+            "self_attn.v_proj": (4096, 1024),
+            "self_attn.o_proj": (4096, 4096),
+            "mlp.up_proj": (4096, 14336),
+            "mlp.gate_proj": (4096, 14336),
+            "mlp.down_proj": (14336, 4096),
+        },
+
+        "llama3.1-8b": {
             "self_attn.k_proj": (4096, 1024),
             "self_attn.q_proj": (4096, 4096),
             "self_attn.v_proj": (4096, 1024),

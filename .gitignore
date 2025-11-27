@@ -1,0 +1,9 @@
+untrained_model/*
+calib/*
+logs/*
+eval_compressed_model.ipynb
+eval_ptb.py
+test_mmlu.py
+out.txt
+__pycache__/*
+*/__pycache__/*

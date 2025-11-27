@@ -102,10 +102,18 @@ def create_model(config):
 
     else:
         if config.model_type == "llama2":
-            tokenizer = LlamaTokenizer.from_pretrained(config.model_name)
+            # Use AutoTokenizer for LLaMA 3.1, LlamaTokenizer for LLaMA 2
+            if "llama-3" in config.model_name.lower() or "llama3" in config.model_name.lower():
+                tokenizer = AutoTokenizer.from_pretrained(config.model_name)
+            else:
+                tokenizer = LlamaTokenizer.from_pretrained(config.model_name)
         else:
             tokenizer = AutoTokenizer.from_pretrained(config.model_name)
-        tokenizer.pad_token = "[PAD]"
+        
+        # Set padding token (use eos_token for LLaMA models as they don't have a dedicated pad token)
+        if tokenizer.pad_token is None:
+            tokenizer.pad_token = tokenizer.eos_token
+            tokenizer.pad_token_id = tokenizer.eos_token_id
         print("Start create model!")
         model_config = AutoConfig.from_pretrained(config.model_name)
         model_config.use_cache = False
@@ -131,6 +139,12 @@ def create_model(config):
             if hasattr(config, "k_name"):
                 # calibration data for k, q, v is the same
                 calib_names.append(config.k_name)
+            if hasattr(config, "q_name"):
+                # calibration data for k, q, v is the same
+                calib_names.append(config.k_name)
+            if hasattr(config, "v_name"):
+                # calibration data for k, q, v is the same
+                calib_names.append(config.k_name)
             if hasattr(config, "attn_name"):
                 calib_names.append(config.attn_name)
             calib_names.append(config.o_name)
@@ -138,6 +152,8 @@ def create_model(config):
             calib_names.append(config.down_name)
             Calib.build_calibration_dataset(std_model, dataloader, calib_names, config.model_type, config.calib_path)
             print("Calib build done!")
+        else:
+            print("Skip building calibration data, using existing data from {}".format(config.calib_path))
 
         short_model_name = ShareConfig.name_map[config.model_name]
 
